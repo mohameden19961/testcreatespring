@@ -1,0 +1,11 @@
+# MySQL
+spring.datasource.url=jdbc:mysql://localhost:3306/votre_base_de_donnees
+spring.datasource.username=votre_utilisateur
+spring.datasource.password=votre_mot_de_passe
+
+# JPA
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+
+# Server (Optionnel, 8080 par défaut)
+# server.port=8081

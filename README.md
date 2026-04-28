@@ -53,9 +53,11 @@ Vous devez imperativement modifier ces lignes avec vos informations :
 - POST /api/users/{id}/role : Change le role d'un utilisateur (ex: passer de USER a ADMIN). Acces : Admin uniquement.
 
 ## Configuration
-1. Creer une base de donnees MySQL nommee : testprojetspring
-2. Configurer les identifiants dans src/main/resources/application.properties.
-3. Lancer l'application avec la commande : mvn spring-boot:run
+1. Creer une base de donnees MySQL nommee : `testprojetspring`
+2. Copier le fichier `src/main/resources/application.properties.example` vers `src/main/resources/application.properties`.
+3. Configurer vos identifiants (base de donnees, utilisateur, mot de passe) dans `src/main/resources/application.properties`.
+   - *Note : Ce fichier est ignore par Git pour securiser vos informations.*
+4. Lancer l'application avec la commande : `mvn spring-boot:run`
 
 ## Securite
 - Les mots de passe sont haches avec BCrypt avant d'etre stockes.
