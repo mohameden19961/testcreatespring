@@ -51,7 +51,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
         
-        user.setRole(newRole);
+        user.setRole(newRole.toUpperCase());
         User saved = userRepository.save(user);
 
         UserDTO result = new UserDTO();

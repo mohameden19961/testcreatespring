@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,8 +39,12 @@ public class UserController {
         return ResponseEntity.ok(userService.login(loginDTO));
     }
 
-    @PostMapping("/{id}/role")
-    public ResponseEntity<ApiResponse<UserDTO>> updateRole(@PathVariable Long id, @RequestBody String newRole) {
+    @PutMapping("/{id}/role")
+    public ResponseEntity<ApiResponse<UserDTO>> updateRole(@PathVariable Long id, @RequestBody java.util.Map<String, String> request) {
+        String newRole = request.get("role");
+        if (newRole == null) {
+            throw new RuntimeException("Le champ 'role' est obligatoire");
+        }
         return ResponseEntity.ok(userService.updateRole(id, newRole));
     }
 }
