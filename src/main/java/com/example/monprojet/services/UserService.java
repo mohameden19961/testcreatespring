@@ -1,5 +1,7 @@
 package com.example.monprojet.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -59,8 +61,8 @@ public class UserService {
         return new ApiResponse<>("Rôle mis à jour avec succès", true, result);
     }
 
-    public ApiResponse<java.util.List<UserDTO>> getAllUsers() {
-        java.util.List<UserDTO> users = userRepository.findAll().stream()
+    public ApiResponse<List<UserDTO>> getAllUsers() {
+        List<UserDTO> users = userRepository.findAll().stream()
                 .map(user -> {
                     UserDTO dto = new UserDTO();
                     dto.setId(user.getId());

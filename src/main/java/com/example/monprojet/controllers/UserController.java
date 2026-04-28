@@ -1,7 +1,11 @@
 package com.example.monprojet.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +23,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @org.springframework.web.bind.annotation.GetMapping
-    public ResponseEntity<ApiResponse<java.util.List<UserDTO>>> getAllUsers() {
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<UserDTO>>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
@@ -35,7 +39,7 @@ public class UserController {
     }
 
     @PostMapping("/{id}/role")
-    public ResponseEntity<ApiResponse<UserDTO>> updateRole(@org.springframework.web.bind.annotation.PathVariable Long id, @RequestBody String newRole) {
+    public ResponseEntity<ApiResponse<UserDTO>> updateRole(@PathVariable Long id, @RequestBody String newRole) {
         return ResponseEntity.ok(userService.updateRole(id, newRole));
     }
 }
