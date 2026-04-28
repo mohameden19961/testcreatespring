@@ -19,6 +19,11 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @org.springframework.web.bind.annotation.GetMapping
+    public ResponseEntity<ApiResponse<java.util.List<UserDTO>>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<UserDTO>> register(@jakarta.validation.Valid @RequestBody UserDTO userDTO) {
         return ResponseEntity.status(201).body(userService.register(userDTO));

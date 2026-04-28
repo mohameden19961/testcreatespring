@@ -33,8 +33,8 @@ public class UserService {
 
         User saved = userRepository.save(user);
 
-        // Entity → DTO
         UserDTO result = new UserDTO();
+        result.setId(saved.getId());
         result.setUsername(saved.getUsername());
         result.setEmail(saved.getEmail()); 
         result.setRole(saved.getRole());
@@ -51,11 +51,26 @@ public class UserService {
         User saved = userRepository.save(user);
 
         UserDTO result = new UserDTO();
+        result.setId(saved.getId());
         result.setUsername(saved.getUsername());
         result.setEmail(saved.getEmail());
         result.setRole(saved.getRole());
 
         return new ApiResponse<>("Rôle mis à jour avec succès", true, result);
+    }
+
+    public ApiResponse<java.util.List<UserDTO>> getAllUsers() {
+        java.util.List<UserDTO> users = userRepository.findAll().stream()
+                .map(user -> {
+                    UserDTO dto = new UserDTO();
+                    dto.setId(user.getId());
+                    dto.setUsername(user.getUsername());
+                    dto.setEmail(user.getEmail());
+                    dto.setRole(user.getRole());
+                    return dto;
+                })
+                .toList();
+        return new ApiResponse<>("Liste des utilisateurs récupérée", true, users);
     }
 
 

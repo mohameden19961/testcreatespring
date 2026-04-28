@@ -5,6 +5,8 @@ import lombok.Data;
 
 @Data
 public class UserDTO {
+    private Long id;
+
     @NotBlank(message = "Le nom d'utilisateur est obligatoire")
     @Size(min = 3, max = 50)
     private String username;
