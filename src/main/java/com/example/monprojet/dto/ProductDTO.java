@@ -12,4 +12,6 @@ public class ProductDTO {
 
     @Positive(message = "Le prix doit être positif")
     private double price;
+
+    private Long userId;
 }

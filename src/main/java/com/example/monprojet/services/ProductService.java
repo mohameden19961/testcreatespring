@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.monprojet.data.entities.Product;
+import com.example.monprojet.data.entities.User;
 import com.example.monprojet.data.repositories.ProductRepository;
+import com.example.monprojet.data.repositories.UserRepository;
 import com.example.monprojet.dto.ApiResponse;
 import com.example.monprojet.dto.ProductDTO;
 import com.example.monprojet.exceptions.ResourceNotFoundException;
@@ -17,74 +19,77 @@ public class ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+    
+
+
+    private ProductDTO toDTO(Product entity) {
+        ProductDTO dto = new ProductDTO();
+        dto.setId(entity.getId());
+        dto.setName(entity.getName());
+        dto.setPrice(entity.getPrice());
+        if (entity.getUser() != null) {
+            dto.setUserId(entity.getUser().getId());
+        }
+        return dto;
+    }
     
     public ApiResponse<List<ProductDTO>> findAll() {
-    List<Product> products = productRepository.findAll();
-
-    List<ProductDTO> productDTOs = new ArrayList<>();
-    for (int i = 0; i < products.size(); i++) {
-        ProductDTO dto = new ProductDTO();
-        dto.setId(products.get(i).getId());
-        dto.setName(products.get(i).getName());
-        dto.setPrice(products.get(i).getPrice());
-        productDTOs.add(dto);
+        List<Product> products = productRepository.findAll();
+        List<ProductDTO> productDTOs = new ArrayList<>();
+        for (Product product : products) {
+            productDTOs.add(toDTO(product));
+        }
+        return new ApiResponse<>("Liste des produits récupérée", true, productDTOs);
     }
 
-    return new ApiResponse<>("Liste récupérée avec succès", true, productDTOs);
-}
-    
-
     public ApiResponse<ProductDTO> findById(Long id) {
-    Product product = productRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException(
-                "Erreur : Produit non trouvé avec l'id : " + id));
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                    "Erreur : Produit non trouvé avec l'id : " + id));
 
-    ProductDTO dto = new ProductDTO();
-    dto.setId(product.getId());
-    dto.setName(product.getName());
-    dto.setPrice(product.getPrice());
-
-    return new ApiResponse<>("Produit trouvé", true, dto);
-   }
+        return new ApiResponse<>("Produit trouvé", true, toDTO(product));
+    }
 
     public ApiResponse<ProductDTO> save(ProductDTO productDTO) {
+        // DTO → Entity
+        Product product = new Product();
+        product.setName(productDTO.getName());
+        product.setPrice(productDTO.getPrice());
 
-    // DTO → Entity
-    Product product = new Product();
-    product.setName(productDTO.getName());
-    product.setPrice(productDTO.getPrice());
+        if (productDTO.getUserId() != null) {
+            User user = userRepository.findById(productDTO.getUserId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Utilisateur non trouvé avec l'id : " + productDTO.getUserId()));
+            product.setUser(user);
+        }
 
-    Product saved = productRepository.save(product);
+        Product saved = productRepository.save(product);
 
-    // Entity → DTO
-    ProductDTO result = new ProductDTO();
-    result.setId(saved.getId());
-    result.setName(saved.getName());
-    result.setPrice(saved.getPrice());
-
-    return new ApiResponse<>(
-        "Le produit '" + result.getName() + "' a été créé avec succès !",
-        true,
-        result
-    );
-}
+        return new ApiResponse<>(
+            "Le produit '" + saved.getName() + "' a été créé avec succès !",
+            true,
+            toDTO(saved)
+        );
+    }
 
     public ApiResponse<ProductDTO> update(Long id, ProductDTO productDTO) {
-        // findById lance l'exception si l'id n'existe pas, donc le message d'erreur est géré
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Echec de la mise à jour : l'id " + id + " n'existe pas"));
         
         product.setName(productDTO.getName());
         product.setPrice(productDTO.getPrice());
+
+        if (productDTO.getUserId() != null) {
+            User user = userRepository.findById(productDTO.getUserId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Utilisateur non trouvé avec l'id : " + productDTO.getUserId()));
+            product.setUser(user);
+        }
+        
         Product updated = productRepository.save(product);
         
-        // Entity → DTO
-        ProductDTO dto = new ProductDTO();
-        dto.setId(updated.getId());
-        dto.setName(updated.getName());
-        dto.setPrice(updated.getPrice());
-
-        return new ApiResponse<>("Le produit a été mis à jour avec succès", true, dto);
+        return new ApiResponse<>("Le produit a été mis à jour avec succès", true, toDTO(updated));
     }
 
     public ApiResponse<Void> delete(Long id) {

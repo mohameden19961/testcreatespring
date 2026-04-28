@@ -31,4 +31,7 @@ public class User {
     @NotBlank(message = "Le rôle est obligatoire")
     @Column(nullable = false)
     private String role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private java.util.List<Product> products;
 }

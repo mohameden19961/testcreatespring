@@ -21,6 +21,12 @@ Vous devez imperativement modifier ces lignes avec vos informations :
 - Inscription : Tout nouvel utilisateur inscrit via l'API publique recoit automatiquement le role USER.
 - Modification de role : Seul l'administrateur systeme peut modifier le role d'un autre utilisateur.
 
+### Relation MCD (Modèle Conceptuel de Données)
+Le système gère désormais une relation entre les utilisateurs et les produits :
+- **Un utilisateur peut posséder plusieurs produits** (Relation 1:N).
+- **Chaque produit est lié à un utilisateur** (propriétaire/créateur).
+- Lors de la création ou mise à jour d'un produit, il est possible de spécifier l'identifiant de l'utilisateur via le champ `userId`.
+
 ## Technologies
 - Java 21
 - Spring Boot 3.4.5
@@ -43,7 +49,7 @@ Vous devez imperativement modifier ces lignes avec vos informations :
 ### Gestion des Produits
 - GET /api/products : Liste tous les produits. Acces : Public.
 - GET /api/products/{id} : Recupere les details d'un produit par son ID. Acces : Admin uniquement.
-- POST /api/products : Cree un nouveau produit. Acces : Tout utilisateur authentifie.
+- POST /api/products : Cree un nouveau produit. **Nécessite `userId` dans le corps de la requête.** Acces : Tout utilisateur authentifie.
 - PUT /api/products/{id} : Met a jour un produit existant. Acces : Tout utilisateur authentifie.
 - DELETE /api/products/{id} : Supprime un produit. Acces : Admin uniquement.
 

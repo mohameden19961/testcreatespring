@@ -16,4 +16,8 @@ public class Product {
 
     @Positive(message = "Le prix doit être positif")
     private double price;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }
