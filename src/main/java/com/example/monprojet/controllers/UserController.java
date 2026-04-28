@@ -28,4 +28,9 @@ public class UserController {
     public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginDTO loginDTO) {
         return ResponseEntity.ok(userService.login(loginDTO));
     }
+
+    @PostMapping("/{id}/role")
+    public ResponseEntity<ApiResponse<UserDTO>> updateRole(@org.springframework.web.bind.annotation.PathVariable Long id, @RequestBody String newRole) {
+        return ResponseEntity.ok(userService.updateRole(id, newRole));
+    }
 }

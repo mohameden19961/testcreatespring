@@ -25,20 +25,37 @@ public class UserService {
         // DTO → Entity
         User user = new User();
         user.setUsername(userDTO.getUsername());
-        user.setEmail(userDTO.getEmail()); // ← Nouveau
+        user.setEmail(userDTO.getEmail()); 
         user.setPassword(passwordEncoder.encode(userDTO.getPassword())); 
-        user.setRole(userDTO.getRole());
+        // Par défaut, tout nouvel utilisateur est un simple USER
+        // Seul l'admin pourra changer cela plus tard
+        user.setRole("USER");
 
         User saved = userRepository.save(user);
 
         // Entity → DTO
         UserDTO result = new UserDTO();
         result.setUsername(saved.getUsername());
-        result.setEmail(saved.getEmail()); // ← Nouveau
+        result.setEmail(saved.getEmail()); 
         result.setRole(saved.getRole());
         
 
         return new ApiResponse<>("User créé avec succès", true, result);
+    }
+
+    public ApiResponse<UserDTO> updateRole(Long userId, String newRole) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        
+        user.setRole(newRole);
+        User saved = userRepository.save(user);
+
+        UserDTO result = new UserDTO();
+        result.setUsername(saved.getUsername());
+        result.setEmail(saved.getEmail());
+        result.setRole(saved.getRole());
+
+        return new ApiResponse<>("Rôle mis à jour avec succès", true, result);
     }
 
 

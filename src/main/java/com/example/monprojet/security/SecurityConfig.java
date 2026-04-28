@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/users/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/users/*/role").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
             .httpBasic(withDefaults());
