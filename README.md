@@ -56,7 +56,7 @@ Le système gère désormais une relation entre les utilisateurs et les produits
 ### Gestion des Utilisateurs
 - POST /api/users/register : Enregistre un nouvel utilisateur (Role USER par defaut). Acces : Public.
 - POST /api/users/login : Authentification par email. Retourne un **JWT Token**. Acces : Public.
-- POST /api/users/{id}/role : Change le role d'un utilisateur (ex: passer de USER a ADMIN). Acces : Admin uniquement.
+- PUT /api/users/{id}/role : Change le role d'un utilisateur (ex: passer de USER a ADMIN). Acces : Admin uniquement.
 
 ## Configuration
 1. Creer une base de donnees MySQL nommee : `testprojetspring`
