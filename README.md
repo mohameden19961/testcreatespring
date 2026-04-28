@@ -1,75 +1,63 @@
 # Mon Projet Spring Boot - Apprentissage
 
-> [!NOTE]
-> **Avertissement** : Ce projet n'est pas un produit fini. Il s'agit d'un **programme d'apprentissage sur Spring Boot**, réalisé par un **débutant** dans le cadre de sa formation. L'objectif est d'explorer les concepts fondamentaux de Spring, de la sécurité et de la persistance des données.
+Note : Ce projet est un programme d'apprentissage sur Spring Boot, realise par un debutant. Il sert a explorer les bases de la creation d'une API REST, de la securite et de la gestion des bases de donnees.
 
 ## Description
-Ce projet est une application backend développée avec Spring Boot pour la gestion de produits. Il implémente une API REST sécurisée avec une architecture en couches pour assurer la maintenabilité et la scalabilité.
+L'application est un systeme de gestion de produits avec une architecture en couches. Elle utilise Spring Security pour proteger les donnees et restreindre les actions selon le role de l'utilisateur.
 
-## Dernières Mises à Jour
-- **Initialisation Automatique** : Le système crée désormais un compte administrateur par défaut au premier démarrage.
-- **Gestion des Rôles** : Mise en place d'une logique où seul l'administrateur système peut attribuer ou modifier les rôles des utilisateurs.
-- **Sécurisation de l'Inscription** : Par défaut, tout nouvel utilisateur inscrit via l'API publique reçoit le rôle `USER`.
+## Mise a jour du systeme
+Le systeme a ete mis a jour pour inclure une initialisation automatique de l'administrateur et un controle strict des roles.
 
-## Identifiants Administrateur (Système)
-Au démarrage, le compte suivant est créé automatiquement :
-- **Nom** : Abdy Mohameden
-- **Email** : 24068@supnum.mr
-- **Mot de passe** : 24068@PASSWORD
-- **Rôle** : ADMIN
+### Obligation de Configuration de l'Administrateur
+Il est obligatoire de configurer vos propres identifiants d'administrateur avant de lancer l'application en production. Pour cela, vous devez modifier le fichier suivant :
+src/main/java/com/example/monprojet/DataInitializer.java
 
-## Technologies Utilisées
+Vous devez imperativement modifier ces lignes avec vos informations :
+- admin.setUsername("Votre Nom");
+- admin.setEmail("votre@email.com");
+- admin.setPassword(passwordEncoder.encode("votre_mot_de_passe"));
+
+### Logique des Roles
+- Inscription : Tout nouvel utilisateur inscrit via l'API publique recoit automatiquement le role USER.
+- Modification de role : Seul l'administrateur systeme peut modifier le role d'un autre utilisateur.
+
+## Technologies
 - Java 21
 - Spring Boot 3.4.5
-- Spring Data JPA
-- Spring Security (Authentification Basic + BCrypt)
-- MySQL
+- Spring Data JPA (MySQL)
+- Spring Security (Basic Auth + BCrypt)
 - Lombok
 - Maven
 
-## Structure du Projet
-L'application est structurée de la manière suivante :
-- **controllers** : Gère les requêtes HTTP entrantes et définit les endpoints.
-- **services** : Contient la logique métier et fait le lien entre les contrôleurs et les dépôts.
-- **data.entities** : Définit les entités persistantes pour MySQL.
-- **data.repositories** : Gère les interactions avec la base de données via Spring Data JPA.
-- **dto** : Contient les objets de transfert de données (Data Transfer Objects).
-- **security** : Gère la configuration de la sécurité, le hachage des mots de passe et le service de détails utilisateur.
-- **exceptions** : Fournit un mécanisme global de gestion des erreurs pour des réponses API cohérentes.
-- **DataInitializer.java** : Gère l'initialisation des données au démarrage (Admin par défaut).
+## Structure du projet
+- controllers : Points d'entree de l'API.
+- services : Logique metier de l'application.
+- data.entities : Modeles de donnees pour la base de donnees.
+- data.repositories : Interfaces pour les operations de base de donnees.
+- dto : Objets de transfert de donnees pour les requetes et reponses.
+- security : Configuration de la securite et authentification.
+- exceptions : Gestion globale des erreurs.
 
-## Installation et Configuration
-
-### Prérequis
-- Java JDK 21
-- Maven 3.x
-- Serveur MySQL
-
-### Base de données
-1. Créez une base de données MySQL nommée : `testprojetspring`
-2. Vérifiez ou modifiez les identifiants dans `src/main/resources/application.properties`.
-
-### Exécution
-Pour lancer l'application en local :
-```bash
-mvn spring-boot:run
-```
-
-## Points d'Entrée de l'API (Endpoints)
+## Endpoints de l'API
 
 ### Gestion des Produits
-- `GET /api/products` : Liste tous les produits (Accès : Public)
-- `GET /api/products/{id}` : Détails d'un produit spécifique (Accès : ROLE_ADMIN)
-- `POST /api/products` : Ajouter un nouveau produit (Accès : Authentifié)
-- `PUT /api/products/{id}` : Modifier un produit existant (Accès : Authentifié)
-- `DELETE /api/products/{id}` : Supprimer un produit (Accès : ROLE_ADMIN)
+- GET /api/products : Liste tous les produits. Acces : Public.
+- GET /api/products/{id} : Recupere les details d'un produit par son ID. Acces : Admin uniquement.
+- POST /api/products : Cree un nouveau produit. Acces : Tout utilisateur authentifie.
+- PUT /api/products/{id} : Met a jour un produit existant. Acces : Tout utilisateur authentifie.
+- DELETE /api/products/{id} : Supprime un produit. Acces : Admin uniquement.
 
 ### Gestion des Utilisateurs
-- `POST /api/users/register` : Créer un nouveau compte (Rôle par défaut : USER)
-- `POST /api/users/login` : Authentification utilisateur.
-- `POST /api/users/{id}/role` : Modifier le rôle d'un utilisateur (Accès : **ROLE_ADMIN uniquement**)
+- POST /api/users/register : Enregistre un nouvel utilisateur (Role USER par defaut). Acces : Public.
+- POST /api/users/login : Permet a un utilisateur de s'authentifier. Acces : Public.
+- POST /api/users/{id}/role : Change le role d'un utilisateur (ex: passer de USER a ADMIN). Acces : Admin uniquement.
 
-## Sécurité
-- **Authentification** : HTTP Basic Auth.
-- **Hachage** : Les mots de passe sont sécurisés avec `BCryptPasswordEncoder`.
-- **RBAC (Role Based Access Control)** : Accès restreint basé sur les rôles (USER, ADMIN).
+## Configuration
+1. Creer une base de donnees MySQL nommee : testprojetspring
+2. Configurer les identifiants dans src/main/resources/application.properties.
+3. Lancer l'application avec la commande : mvn spring-boot:run
+
+## Securite
+- Les mots de passe sont haches avec BCrypt avant d'etre stockes.
+- L'authentification se fait via HTTP Basic Auth.
+- La protection CSRF est desactivee pour faciliter les tests de l'API.
