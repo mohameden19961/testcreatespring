@@ -25,7 +25,7 @@ Vous devez imperativement modifier ces lignes avec vos informations :
 - Java 21
 - Spring Boot 3.4.5
 - Spring Data JPA (MySQL)
-- Spring Security (Basic Auth + BCrypt)
+- Spring Security (JWT + BCrypt)
 - Lombok
 - Maven
 
@@ -49,7 +49,7 @@ Vous devez imperativement modifier ces lignes avec vos informations :
 
 ### Gestion des Utilisateurs
 - POST /api/users/register : Enregistre un nouvel utilisateur (Role USER par defaut). Acces : Public.
-- POST /api/users/login : Permet a un utilisateur de s'authentifier (utilise l'**email**). Acces : Public.
+- POST /api/users/login : Authentification par email. Retourne un **JWT Token**. Acces : Public.
 - POST /api/users/{id}/role : Change le role d'un utilisateur (ex: passer de USER a ADMIN). Acces : Admin uniquement.
 
 ## Configuration
@@ -61,6 +61,10 @@ Vous devez imperativement modifier ces lignes avec vos informations :
    - Par defaut, l'application est accessible sur : `http://localhost:8081`
 
 ## Securite
-- Les mots de passe sont haches avec BCrypt avant d'etre stockes.
-- L'authentification se fait via **HTTP Basic Auth** (utiliser l'**email** comme identifiant).
+- Les mots de passe sont haches avec BCrypt.
+- L'authentification utilise des **JWT (JSON Web Tokens)**.
+- Le systeme est **Stateless** (aucune session stockee sur le serveur).
+- Pour acceder aux endpoints proteges :
+    1. Se connecter via `POST /api/users/login` pour obtenir le token.
+    2. Ajouter le token dans l'en-tete de vos requetes : `Authorization: Bearer <votre_token>`.
 - La protection CSRF est desactivee pour faciliter les tests de l'API.

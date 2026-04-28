@@ -18,6 +18,9 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Autowired
+    private JwtAuthenticationFilter jwtFilter;
+
+    @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
     @Bean
@@ -39,9 +42,22 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/users/*/role").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
-            .httpBasic(withDefaults());
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS)
+            )
+            .authenticationProvider(authenticationProvider())
+            .addFilterBefore(jwtFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public org.springframework.security.authentication.AuthenticationProvider authenticationProvider() {
+        org.springframework.security.authentication.dao.DaoAuthenticationProvider authProvider = 
+            new org.springframework.security.authentication.dao.DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(customUserDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
     }
 
     @Bean

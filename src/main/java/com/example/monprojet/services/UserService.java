@@ -13,6 +13,8 @@ import com.example.monprojet.data.repositories.UserRepository;
 import com.example.monprojet.dto.ApiResponse;
 import com.example.monprojet.dto.LoginDTO;
 import com.example.monprojet.dto.UserDTO;
+import com.example.monprojet.security.CustomUserDetailsService;
+import com.example.monprojet.security.JwtService;
 
 @Service
 public class UserService {
@@ -79,6 +81,12 @@ public class UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private JwtService jwtService;
+
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
+
     public ApiResponse<String> login(LoginDTO loginDTO) {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
@@ -86,6 +94,10 @@ public class UserService {
                 loginDTO.getPassword()
             )
         );
-        return new ApiResponse<>("Login réussi", true, loginDTO.getEmail());
+        
+        var user = userDetailsService.loadUserByUsername(loginDTO.getEmail());
+        String token = jwtService.generateToken(user);
+        
+        return new ApiResponse<>("Login réussi", true, token);
     }
 }
