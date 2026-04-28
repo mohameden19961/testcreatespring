@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.monprojet.dto.ApiResponse;
+import com.example.monprojet.dto.LoginDTO;
 import com.example.monprojet.dto.UserDTO;
 import com.example.monprojet.services.UserService;
 
@@ -19,7 +20,12 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<UserDTO>> register(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<ApiResponse<UserDTO>> register(@jakarta.validation.Valid @RequestBody UserDTO userDTO) {
         return ResponseEntity.status(201).body(userService.register(userDTO));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginDTO loginDTO) {
+        return ResponseEntity.ok(userService.login(loginDTO));
     }
 }

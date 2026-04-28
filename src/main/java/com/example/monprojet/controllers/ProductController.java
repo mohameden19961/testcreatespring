@@ -35,12 +35,12 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<ProductDTO>> create(@RequestBody ProductDTO productDTO) {
+    public ResponseEntity<ApiResponse<ProductDTO>> create(@jakarta.validation.Valid @RequestBody ProductDTO productDTO) {
         return ResponseEntity.status(201).body(productService.save(productDTO));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<ProductDTO>> update(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
+    public ResponseEntity<ApiResponse<ProductDTO>> update(@PathVariable Long id, @jakarta.validation.Valid @RequestBody ProductDTO productDTO) {
         return ResponseEntity.ok(productService.update(id, productDTO));
     }
 
