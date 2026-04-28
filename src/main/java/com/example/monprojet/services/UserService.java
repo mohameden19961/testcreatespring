@@ -65,10 +65,10 @@ public class UserService {
     public ApiResponse<String> login(LoginDTO loginDTO) {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
-                loginDTO.getUsername(),
+                loginDTO.getEmail(),
                 loginDTO.getPassword()
             )
         );
-        return new ApiResponse<>("Login réussi", true, loginDTO.getUsername());
+        return new ApiResponse<>("Login réussi", true, loginDTO.getEmail());
     }
 }

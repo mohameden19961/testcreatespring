@@ -49,7 +49,7 @@ Vous devez imperativement modifier ces lignes avec vos informations :
 
 ### Gestion des Utilisateurs
 - POST /api/users/register : Enregistre un nouvel utilisateur (Role USER par defaut). Acces : Public.
-- POST /api/users/login : Permet a un utilisateur de s'authentifier. Acces : Public.
+- POST /api/users/login : Permet a un utilisateur de s'authentifier (utilise l'**email**). Acces : Public.
 - POST /api/users/{id}/role : Change le role d'un utilisateur (ex: passer de USER a ADMIN). Acces : Admin uniquement.
 
 ## Configuration
@@ -58,8 +58,9 @@ Vous devez imperativement modifier ces lignes avec vos informations :
 3. Configurer vos identifiants (base de donnees, utilisateur, mot de passe) dans `src/main/resources/application.properties`.
    - *Note : Ce fichier est ignore par Git pour securiser vos informations.*
 4. Lancer l'application avec la commande : `mvn spring-boot:run`
+   - Par defaut, l'application est accessible sur : `http://localhost:8081`
 
 ## Securite
 - Les mots de passe sont haches avec BCrypt avant d'etre stockes.
-- L'authentification se fait via HTTP Basic Auth.
+- L'authentification se fait via **HTTP Basic Auth** (utiliser l'**email** comme identifiant).
 - La protection CSRF est desactivee pour faciliter les tests de l'API.
