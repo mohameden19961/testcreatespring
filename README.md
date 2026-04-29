@@ -1,31 +1,30 @@
-# Mon Projet Spring Boot - Apprentissage
+# Mon Projet Spring Boot - Gestion des Étudiants (API REST)
 
-Note : Ce projet est un programme d'apprentissage sur Spring Boot, realise par un debutant. Il sert a explorer les bases de la creation d'une API REST, de la securite et de la gestion des bases de donnees.
+Note : Ce projet est un programme d'apprentissage sur Spring Boot, réalisé par un débutant. Il sert à explorer les bases de la création d'une API REST, de la sécurité et de la gestion des bases de données. Il a été mis à jour pour suivre le TP de SUPNUM Mauritanie.
 
 ## Description
-L'application est un systeme de gestion de produits avec une architecture en couches. Elle utilise Spring Security pour proteger les donnees et restreindre les actions selon le role de l'utilisateur.
+L'application est un système de gestion d'étudiants et de leurs cours avec une architecture en couches. Elle utilise Spring Security (JWT) pour protéger les données et restreindre les actions selon le rôle de l'utilisateur.
 
-## Mise a jour du systeme
-Le systeme a ete mis a jour pour inclure une initialisation automatique de l'administrateur et un controle strict des roles.
+## Mise à jour du système
+Le système a été migré de la gestion de produits vers la gestion d'étudiants (`Student`) et de cours (`Course`).
 
 ### Obligation de Configuration de l'Administrateur
-Il est obligatoire de configurer vos propres identifiants d'administrateur avant de lancer l'application en production. Pour cela, vous devez modifier le fichier suivant :
-src/main/java/com/example/monprojet/DataInitializer.java
+Il est obligatoire de configurer vos propres identifiants d'administrateur avant de lancer l'application. Pour cela, modifiez le fichier suivant :
+`src/main/java/com/example/monprojet/DataInitializer.java`
 
-Vous devez imperativement modifier ces lignes avec vos informations :
-- admin.setUsername("Votre Nom");
-- admin.setEmail("votre@email.com");
-- admin.setPassword(passwordEncoder.encode("votre_mot_de_passe"));
+Identifiants par défaut (à modifier) :
+- **Email** : `24068@supnum.mr`
+- **Mot de passe** : `24068@PASSWORD`
 
-### Logique des Roles
-- Inscription : Tout nouvel utilisateur inscrit via l'API publique recoit automatiquement le role USER.
-- Modification de role : Seul l'administrateur systeme peut modifier le role d'un autre utilisateur.
+### Logique des Rôles
+- **Inscription** : Tout nouvel utilisateur inscrit via l'API publique reçoit automatiquement le rôle `USER`.
+- **Rôle ADMIN** : Seul l'administrateur peut créer, modifier ou supprimer des étudiants et des cours.
+- **Rôle USER / CLIENT** : Peut consulter les détails d'un étudiant.
 
-### Relation MCD (Modèle Conceptuel de Données)
-Le système gère désormais une relation entre les utilisateurs et les produits :
-- **Un utilisateur peut posséder plusieurs produits** (Relation 1:N).
-- **Chaque produit est lié à un utilisateur** (propriétaire/créateur).
-- Lors de la création ou mise à jour d'un produit, il est possible de spécifier l'identifiant de l'utilisateur via le champ `userId`.
+### Modèle de Données (MCD)
+Le système gère une relation entre les étudiants et les cours :
+- **Un étudiant peut avoir plusieurs cours** (Relation OneToMany).
+- **Chaque cours est lié à un étudiant unique**.
 
 ## Technologies
 - Java 21
@@ -36,41 +35,41 @@ Le système gère désormais une relation entre les utilisateurs et les produits
 - Maven
 
 ## Structure du projet
-- controllers : Points d'entree de l'API.
-- services : Logique metier de l'application.
-- data.entities : Modeles de donnees pour la base de donnees.
-- data.repositories : Interfaces pour les operations de base de donnees.
-- dto : Objets de transfert de donnees pour les requetes et reponses.
-- security : Configuration de la securite et authentification.
-- exceptions : Gestion globale des erreurs.
+- `controllers` : Points d'entrée de l'API REST.
+- `services` : Logique métier (traitement des données, conversion DTO).
+- `data.entities` : Modèles JPA pour la base de données.
+- `data.repositories` : Interfaces Spring Data JPA.
+- `dto` : Objets de transfert de données (StudentDTO, CourseDTO).
+- `security` : Configuration JWT et sécurité.
+- `exceptions` : Gestion globale des erreurs.
 
 ## Endpoints de l'API
 
-### Gestion des Produits
-- GET /api/products : Liste tous les produits. Acces : Public.
-- GET /api/products/{id} : Recupere les details d'un produit par son ID. Acces : Admin uniquement.
-- POST /api/products : Cree un nouveau produit. **Nécessite `userId` dans le corps de la requête.** Acces : Tout utilisateur authentifie.
-- PUT /api/products/{id} : Met a jour un produit existant. Acces : Tout utilisateur authentifie.
-- DELETE /api/products/{id} : Supprime un produit. Acces : Admin uniquement.
+### Gestion des Étudiants
+- **GET** `/api/students` : Liste tous les étudiants. *Accès : Public.*
+- **GET** `/api/students/page?page=0&size=10` : Liste paginée des étudiants. *Accès : Public.*
+- **GET** `/api/students/{id}` : Détails d'un étudiant (inclut ses cours). *Accès : Public.*
+- **GET** `/api/students/search?name=...` : Recherche par nom. *Accès : Public.*
+- **POST** `/api/students` : Créer un étudiant. *Accès : ADMIN.*
+- **PUT** `/api/students/{id}` : Modifier un étudiant. *Accès : ADMIN.*
+- **DELETE** `/api/students/{id}` : Supprimer un étudiant. *Accès : ADMIN.*
 
-### Gestion des Utilisateurs
-- POST /api/users/register : Enregistre un nouvel utilisateur (Role USER par defaut). Acces : Public.
-- POST /api/users/login : Authentification par email. Retourne un **JWT Token**. Acces : Public.
-- PUT /api/users/{id}/role : Change le role d'un utilisateur (ex: passer de USER a ADMIN). Acces : Admin uniquement.
+### Gestion des Cours
+- **GET** `/api/courses` : Liste tous les cours existants. *Accès : Public.*
+- **POST** `/api/courses/student/{studentId}` : Ajouter un nouveau cours à un étudiant. *Accès : ADMIN.*
+
+### Gestion des Utilisateurs (Sécurité)
+- **POST** `/api/users/register` : Enregistrer un nouvel utilisateur (Rôle USER). *Accès : Public.*
+- **POST** `/api/users/login` : Connexion par email. Retourne un **Token JWT**. *Accès : Public.*
+- **PUT** `/api/users/{id}/role` : Changer le rôle d'un utilisateur. *Accès : ADMIN.*
 
 ## Configuration
-1. Creer une base de donnees MySQL nommee : `testprojetspring`
-2. Copier le fichier `src/main/resources/application.properties.example` vers `src/main/resources/application.properties`.
-3. Configurer vos identifiants (base de donnees, utilisateur, mot de passe) dans `src/main/resources/application.properties`.
-   - *Note : Ce fichier est ignore par Git pour securiser vos informations.*
-4. Lancer l'application avec la commande : `mvn spring-boot:run`
-   - Par defaut, l'application est accessible sur : `http://localhost:8081`
+1. Créer une base de données MySQL nommée : `testprojetspring`
+2. Configurer vos identifiants dans `src/main/resources/application.properties`.
+3. Lancer l'application : `mvn spring-boot:run`
+4. L'application est accessible sur : `http://localhost:8081`
 
-## Securite
-- Les mots de passe sont haches avec BCrypt.
-- L'authentification utilise des **JWT (JSON Web Tokens)**.
-- Le systeme est **Stateless** (aucune session stockee sur le serveur).
-- Pour acceder aux endpoints proteges :
-    1. Se connecter via `POST /api/users/login` pour obtenir le token.
-    2. Ajouter le token dans l'en-tete de vos requetes : `Authorization: Bearer <votre_token>`.
-- La protection CSRF est desactivee pour faciliter les tests de l'API.
+## Sécurité (JWT)
+Pour accéder aux endpoints protégés (ex: création d'étudiant) :
+1. Se connecter via `POST /api/users/login` pour obtenir le token.
+2. Ajouter le token dans l'en-tête de vos requêtes : `Authorization: Bearer <votre_token>`.
