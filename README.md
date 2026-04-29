@@ -1,75 +1,62 @@
-# Mon Projet Spring Boot - Gestion des Étudiants (API REST)
+# Système de Gestion des Étudiants et Cours (API REST)
 
-Note : Ce projet est un programme d'apprentissage sur Spring Boot, réalisé par un débutant. Il sert à explorer les bases de la création d'une API REST, de la sécurité et de la gestion des bases de données. Il a été mis à jour pour suivre le TP de SUPNUM Mauritanie.
+Ce projet est une application de gestion académique développée dans le cadre du TP de Spring Boot à **SUPNUM Mauritanie**. Il démontre l'utilisation des technologies modernes de Spring pour créer une API REST sécurisée et performante.
 
-## Description
-L'application est un système de gestion d'étudiants et de leurs cours avec une architecture en couches. Elle utilise Spring Security (JWT) pour protéger les données et restreindre les actions selon le rôle de l'utilisateur.
+## 🚀 Fonctionnalités principales
 
-## Mise à jour du système
-Le système a été migré de la gestion de produits vers la gestion d'étudiants (`Student`) et de cours (`Course`).
+- **Gestion des Étudiants** : CRUD complet (Création, Lecture, Mise à jour, Suppression).
+- **Gestion des Cours** : CRUD complet pour les matières/cours.
+- **Système d'Inscriptions (Bonus)** : Relation **ManyToMany** permettant d'inscrire plusieurs étudiants à plusieurs cours.
+- **Sécurité Avancée** : Authentification via **JWT (JSON Web Token)** et gestion des rôles (**ADMIN** et **USER**).
+- **Pagination & Recherche** : Liste paginée des étudiants et recherche par nom.
+- **Gestion Globale des Erreurs** : Réponses API standardisées et gestion des exceptions.
 
-### Obligation de Configuration de l'Administrateur
-Il est obligatoire de configurer vos propres identifiants d'administrateur avant de lancer l'application. Pour cela, modifiez le fichier suivant :
-`src/main/java/com/example/monprojet/DataInitializer.java`
+## 🏗️ Architecture & Technologies
 
-Identifiants par défaut (à modifier) :
-- **Email** : `24068@supnum.mr`
-- **Mot de passe** : `24068@PASSWORD`
+L'application suit une architecture en couches standard :
+- **Java 21** & **Spring Boot 3.4.5**
+- **Spring Security** : JWT + BCrypt pour le hachage des mots de passe.
+- **Spring Data JPA** : Persistance des données avec MySQL.
+- **Lombok** : Pour un code plus concis (Getters, Setters, etc.).
+- **Validation** : Jakarta Validation pour l'intégrité des données entrantes.
 
-### Logique des Rôles
-- **Inscription** : Tout nouvel utilisateur inscrit via l'API publique reçoit automatiquement le rôle `USER`.
-- **Rôle ADMIN** : Seul l'administrateur peut créer, modifier ou supprimer des étudiants et des cours.
-- **Rôle USER / CLIENT** : Peut consulter les détails d'un étudiant.
+## 🔑 Sécurité et Accès
 
-### Modèle de Données (MCD)
-Le système gère une relation entre les étudiants et les cours :
-- **Un étudiant peut avoir plusieurs cours** (Relation OneToMany).
-- **Chaque cours est lié à un étudiant unique**.
+Le système utilise deux niveaux d'accès :
+1. **Administrateur (ADMIN)** : Accès complet (Gestion des étudiants, création de cours, modification des rôles).
+2. **Étudiant (USER)** : Accès en lecture et possibilité de **s'inscrire à des cours**.
 
-## Technologies
-- Java 21
-- Spring Boot 3.4.5
-- Spring Data JPA (MySQL)
-- Spring Security (JWT + BCrypt)
-- Lombok
-- Maven
+> [!IMPORTANT]
+> Les identifiants de l'administrateur par défaut sont configurés dans la classe `DataInitializer.java`. Veuillez les modifier avant le déploiement pour assurer la sécurité de votre application.
 
-## Structure du projet
-- `controllers` : Points d'entrée de l'API REST.
-- `services` : Logique métier (traitement des données, conversion DTO).
-- `data.entities` : Modèles JPA pour la base de données.
-- `data.repositories` : Interfaces Spring Data JPA.
-- `dto` : Objets de transfert de données (StudentDTO, CourseDTO).
-- `security` : Configuration JWT et sécurité.
-- `exceptions` : Gestion globale des erreurs.
+## 📡 Endpoints principaux
 
-## Endpoints de l'API
+### Authentification
+- `POST /api/users/register` : Créer un compte (Rôle USER par défaut).
+- `POST /api/users/login` : Se connecter et obtenir un token JWT.
 
-### Gestion des Étudiants
-- **GET** `/api/students` : Liste tous les étudiants. *Accès : Public.*
-- **GET** `/api/students/page?page=0&size=10` : Liste paginée des étudiants. *Accès : Public.*
-- **GET** `/api/students/{id}` : Détails d'un étudiant (inclut ses cours). *Accès : Public.*
-- **GET** `/api/students/search?name=...` : Recherche par nom. *Accès : Public.*
-- **POST** `/api/students` : Créer un étudiant. *Accès : ADMIN.*
-- **PUT** `/api/students/{id}` : Modifier un étudiant. *Accès : ADMIN.*
-- **DELETE** `/api/students/{id}` : Supprimer un étudiant. *Accès : ADMIN.*
+### Étudiants & Inscriptions
+- `GET /api/students` : Liste de tous les étudiants.
+- `GET /api/students/page` : Liste paginée (ex: `?page=0&size=10`).
+- `GET /api/students/search?name=...` : Recherche par nom.
+- `POST /api/students/{id}/enroll/{courseId}` : Inscrire un étudiant à un cours.
+- `POST /api/students` : Créer un étudiant (**ADMIN**).
 
-### Gestion des Cours
-- **GET** `/api/courses` : Liste tous les cours existants. *Accès : Public.*
-- **POST** `/api/courses/student/{studentId}` : Ajouter un nouveau cours à un étudiant. *Accès : ADMIN.*
+### Cours
+- `GET /api/courses` : Liste des cours disponibles.
+- `POST /api/courses` : Créer un nouveau cours (**ADMIN**).
+- `DELETE /api/courses/{id}` : Supprimer un cours (**ADMIN**).
 
-### Gestion des Utilisateurs (Sécurité)
-- **POST** `/api/users/register` : Enregistrer un nouvel utilisateur (Rôle USER). *Accès : Public.*
-- **POST** `/api/users/login` : Connexion par email. Retourne un **Token JWT**. *Accès : Public.*
-- **PUT** `/api/users/{id}/role` : Changer le rôle d'un utilisateur. *Accès : ADMIN.*
+## 🛠️ Installation
 
-## Configuration
-1. Créer une base de données MySQL nommée : `testprojetspring`
-2. Configurer vos identifiants dans `src/main/resources/application.properties`.
-3. Lancer l'application : `mvn spring-boot:run`
-4. L'application est accessible sur : `http://localhost:8081`
+1. Cloner le projet.
+2. Créer une base de données MySQL : `testprojetspring`.
+3. Configurer vos accès (DB_USERNAME, DB_PASSWORD) dans `src/main/resources/application.properties`.
+4. Lancer l'application :
+   ```bash
+   mvn spring-boot:run
+   ```
+5. Accéder à l'API sur `http://localhost:8081`.
 
-## Sécurité (JWT)
-Pour accéder aux endpoints protégés (ex: création d'étudiant) :
-1. Se connecter via `POST /api/users/login` pour obtenir le token.
-2. Ajouter le token dans l'en-tête de vos requêtes : `Authorization: Bearer <votre_token>`.
+---
+*Réalisé dans le cadre du TP Spring Boot API REST - SUPNUM Mauritanie.*

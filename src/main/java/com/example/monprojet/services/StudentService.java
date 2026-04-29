@@ -1,6 +1,8 @@
 package com.example.monprojet.services;
 
+import com.example.monprojet.data.entities.Course;
 import com.example.monprojet.data.entities.Student;
+import com.example.monprojet.data.repositories.CourseRepository;
 import com.example.monprojet.data.repositories.StudentRepository;
 import com.example.monprojet.dto.CourseDTO;
 import com.example.monprojet.dto.StudentDTO;
@@ -60,6 +62,22 @@ public class StudentService {
             throw new ResourceNotFoundException("Étudiant non trouvé avec l'id : " + id);
         }
         studentRepository.deleteById(id);
+    }
+
+    @Autowired
+    private CourseRepository courseRepository;
+
+    public StudentDTO enrollStudentInCourse(Long studentId, Long courseId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Étudiant non trouvé"));
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cours non trouvé"));
+
+        if (!student.getCourses().contains(course)) {
+            student.getCourses().add(course);
+            studentRepository.save(student);
+        }
+        return convertToDTO(student);
     }
 
     public List<StudentDTO> searchStudentsByName(String name) {

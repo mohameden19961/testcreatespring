@@ -1,6 +1,7 @@
 package com.example.monprojet.data.entities;
 
 import jakarta.persistence.*;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,6 @@ public class Course {
 
     private String title;
 
-    @ManyToOne
-    @JoinColumn(name = "student_id")
-    private Student student;
+    @ManyToMany(mappedBy = "courses")
+    private List<Student> students;
 }

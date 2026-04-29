@@ -62,4 +62,10 @@ public class StudentController {
         List<StudentDTO> students = studentService.searchStudentsByName(name);
         return ResponseEntity.ok(new ApiResponse<>("Résultats de la recherche", true, students));
     }
+
+    @PostMapping("/{studentId}/enroll/{courseId}")
+    public ResponseEntity<ApiResponse<StudentDTO>> enrollInCourse(@PathVariable Long studentId, @PathVariable Long courseId) {
+        StudentDTO student = studentService.enrollStudentInCourse(studentId, courseId);
+        return ResponseEntity.ok(new ApiResponse<>("Inscription réussie", true, student));
+    }
 }
