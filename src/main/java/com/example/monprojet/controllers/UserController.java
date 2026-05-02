@@ -26,25 +26,22 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<UserDTO>>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+        return ResponseEntity.ok(new ApiResponse<>("Liste des utilisateurs récupérée", true, userService.getAllUsers()));
     }
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<UserDTO>> register(@jakarta.validation.Valid @RequestBody UserDTO userDTO) {
-        return ResponseEntity.status(201).body(userService.register(userDTO));
+        return ResponseEntity.status(201).body(new ApiResponse<>("User créé avec succès", true, userService.register(userDTO)));
     }
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginDTO loginDTO) {
-        return ResponseEntity.ok(userService.login(loginDTO));
+        return ResponseEntity.ok(new ApiResponse<>("Login réussi", true, userService.login(loginDTO)));
     }
 
     @PutMapping("/{id}/role")
     public ResponseEntity<ApiResponse<UserDTO>> updateRole(@PathVariable Long id, @RequestBody java.util.Map<String, String> request) {
         String newRole = request.get("role");
-        if (newRole == null) {
-            throw new RuntimeException("Le champ 'role' est obligatoire");
-        }
-        return ResponseEntity.ok(userService.updateRole(id, newRole));
+        return ResponseEntity.ok(new ApiResponse<>("Rôle mis à jour avec succès", true, userService.updateRole(id, newRole)));
     }
 }

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.example.monprojet.data.entities.User;
 import com.example.monprojet.data.repositories.UserRepository;
-import com.example.monprojet.dto.ApiResponse;
 import com.example.monprojet.dto.LoginDTO;
 import com.example.monprojet.dto.UserDTO;
 import com.example.monprojet.security.CustomUserDetailsService;
@@ -25,7 +24,7 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public ApiResponse<UserDTO> register(UserDTO userDTO) {
+    public UserDTO register(UserDTO userDTO) {
         // DTO → Entity
         User user = new User();
         user.setUsername(userDTO.getUsername());
@@ -42,12 +41,13 @@ public class UserService {
         result.setUsername(saved.getUsername());
         result.setEmail(saved.getEmail()); 
         result.setRole(saved.getRole());
-        
-
-        return new ApiResponse<>("User créé avec succès", true, result);
+                return result;
     }
 
-    public ApiResponse<UserDTO> updateRole(Long userId, String newRole) {
+    public UserDTO updateRole(Long userId, String newRole) {
+        if (newRole == null || newRole.trim().isEmpty()) {
+            throw new IllegalArgumentException("Le champ 'role' est obligatoire");
+        }
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
         
@@ -58,12 +58,10 @@ public class UserService {
         result.setId(saved.getId());
         result.setUsername(saved.getUsername());
         result.setEmail(saved.getEmail());
-        result.setRole(saved.getRole());
-
-        return new ApiResponse<>("Rôle mis à jour avec succès", true, result);
+        result.setRole(saved.getRole());        return result;
     }
 
-    public ApiResponse<List<UserDTO>> getAllUsers() {
+    public List<UserDTO> getAllUsers() {
         List<UserDTO> users = userRepository.findAll().stream()
                 .map(user -> {
                     UserDTO dto = new UserDTO();
@@ -74,7 +72,7 @@ public class UserService {
                     return dto;
                 })
                 .toList();
-        return new ApiResponse<>("Liste des utilisateurs récupérée", true, users);
+        return users;
     }
 
 
@@ -87,7 +85,7 @@ public class UserService {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
-    public ApiResponse<String> login(LoginDTO loginDTO) {
+    public String login(LoginDTO loginDTO) {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 loginDTO.getEmail(),
@@ -97,7 +95,6 @@ public class UserService {
         
         var user = userDetailsService.loadUserByUsername(loginDTO.getEmail());
         String token = jwtService.generateToken(user);
-        
-        return new ApiResponse<>("Login réussi", true, token);
+        return token;
     }
 }
