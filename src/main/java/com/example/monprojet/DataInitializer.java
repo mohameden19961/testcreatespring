@@ -20,12 +20,12 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         // Vérifier si l'admin existe déjà
-        String adminEmail = "24068@supnum.mr";
+        String adminEmail = "24120@supnum.mr";
         if (!userRepository.existsByEmail(adminEmail)) {
             User admin = new User();
-            admin.setUsername("Abdy Mohameden");
+            admin.setUsername("Ahmed");
             admin.setEmail(adminEmail);
-            admin.setPassword(passwordEncoder.encode("24068@PASSWORD"));
+            admin.setPassword(passwordEncoder.encode("K2r42070038"));
             admin.setRole("ADMIN");
             
             userRepository.save(admin);
